@@ -1,0 +1,59 @@
+##Experiment Name: Experimental study on Humidity and Temperature Sensing using DHT21 sensor.
+
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <DHT.h>
+
+// Define the DHT sensor
+#define DHTPIN 2
+#define DHTTYPE DHT22
+DHT dht(DHTPIN, DHTTYPE);
+
+// Initialize I2C LCD (Change 0x27 to 0x3F if needed)
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+    Serial.begin(9600);
+    dht.begin();
+
+    lcd.begin(16, 2);  // ✅ Fix: Specify columns and rows
+    lcd.backlight();    // Turn on LCD backlight
+    lcd.setCursor(0, 0);
+    lcd.print("DHT22 Sensor");
+    delay(2000);
+    lcd.clear();
+}
+
+void loop() {
+    float hum = dht.readHumidity();
+    float temp = dht.readTemperature();
+
+    if (isnan(hum) || isnan(temp)) {
+        Serial.println("Failed to read from DHT sensor!");
+        lcd.setCursor(0, 0);
+        lcd.print("DHT22 Error!");
+        return;
+    }
+
+    Serial.print("Humidity: ");
+    Serial.print(hum);
+    Serial.print("%, Temperature: ");
+    Serial.print(temp);
+    Serial.println("Celsius");
+
+    // Display data on I2C LCD
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Humidity: ");
+    lcd.print(hum);
+    lcd.print("%");
+
+    lcd.setCursor(0, 1);
+    lcd.print("Temp: ");
+    lcd.print(temp);
+    lcd.print("C");
+
+    delay(2000);
+}
+
