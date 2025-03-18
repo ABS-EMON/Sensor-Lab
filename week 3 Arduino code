@@ -1,0 +1,65 @@
+##Experiment No.: 02
+##Experiment Name: Experimental study on controlling three different LEDs based on the range of the flame
+
+// Pin definitions
+const int flameSensorPin = A0;  // Analog pin connected to the flame sensor (or potentiometer)
+const int greenLEDPin = 9;      // Green LED for far flame
+const int yellowLEDPin = 10;    // Yellow LED for medium flame
+const int redLEDPin = 11;       // Red LED for close flame
+
+// Thresholds for flame detection
+int lowThreshold = 200;     // Far flame
+int mediumThreshold = 500;  // Medium flame
+int highThreshold = 800;    // Close flame
+
+void setup() {
+  // Initialize serial communication
+  Serial.begin(9600);
+  
+  // Set LED pins as OUTPUT
+  pinMode(greenLEDPin, OUTPUT);
+  pinMode(yellowLEDPin, OUTPUT);
+  pinMode(redLEDPin, OUTPUT);
+  
+  // Turn off all LEDs initially
+  digitalWrite(greenLEDPin, LOW);
+  digitalWrite(yellowLEDPin, LOW);
+  digitalWrite(redLEDPin, LOW);
+}
+
+void loop() {
+  // Read sensor value
+  int sensorValue = analogRead(flameSensorPin);
+  
+  // Print sensor value for monitoring
+  Serial.print("Flame sensor value: ");
+  Serial.println(sensorValue);
+
+  // Control LEDs based on thresholds
+  if (sensorValue < lowThreshold) {
+    // Far flame - Green LED
+    digitalWrite(greenLEDPin, HIGH);
+    digitalWrite(yellowLEDPin, LOW);
+    digitalWrite(redLEDPin, LOW);
+  }
+  else if (sensorValue < mediumThreshold) {
+    // Medium flame - Yellow LED
+    digitalWrite(greenLEDPin, LOW);
+    digitalWrite(yellowLEDPin, HIGH);
+    digitalWrite(redLEDPin, LOW);
+  }
+  else if (sensorValue < highThreshold) {
+    // Close flame - Red LED
+    digitalWrite(greenLEDPin, LOW);
+    digitalWrite(yellowLEDPin, LOW);
+    digitalWrite(redLEDPin, HIGH);
+  }
+  else {
+    // Extreme proximity - Red LED stays on
+    digitalWrite(greenLEDPin, LOW);
+    digitalWrite(yellowLEDPin, LOW);
+    digitalWrite(redLEDPin, HIGH);
+  }
+  
+  delay(100);  // Short delay for stability
+}
